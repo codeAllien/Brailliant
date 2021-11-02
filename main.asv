@@ -1,0 +1,54 @@
+close all;
+clc;
+
+% get Input
+input_name = "Braille Schrift Test Bild Toaster Edition.png";
+input_path = "img_resource/"+input_name;
+
+% display original img
+img = imread(input_path);
+img_width = size(img, 1);
+img_height = size(img, 2);
+
+imshow(img);
+title('Original Picture');
+
+
+
+% resize img
+img = imresize(img, [1024 1024]);
+img = rgb2gray(img);
+
+
+% figure;
+% imshow(img);
+% title('Resized & Black & White');
+
+canny_output = canny_container.canny_edge_detection(img, 0);
+
+% canny_container.display_steps(canny_output, 'Canny Edge Detection Original');
+
+% figure;
+% imshow(canny_output);
+% title('Canny Edge Detection Original');
+
+canny_og_size = imresize(canny_output, [img_width img_height]);
+
+% canny_container.display_steps(canny_og_size, 'Canny Edge Detection Resized');
+
+% BW2 = canny_output;
+% 
+% canny_container.display_steps(BW2, "First");
+% for i=0:2
+%     S1 = strel('disk',3);
+%     BW2 = imdilate(BW2,S1);
+% 
+%     S2 = strel('line', 3, 90);
+%     BW2 = imerode(BW2,S2);
+%     S2 = strel('line', 3, 0);
+%     BW2 = imerode(BW2, S2);
+%     % se = offsetstrel('ball',5,5);
+%     
+% end
+% canny_container.display_steps(BW2, "Final");
+% canny_container.display_steps(BW2, "I don't even know");

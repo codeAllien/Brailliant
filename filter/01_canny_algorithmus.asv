@@ -1,0 +1,48 @@
+% output of this function is canny_output
+% classdef canny_operator
+%     methods
+%         fuction cannyOutput = cannyAlgorithmus(img)
+%         canny_output = edge(img,'Canny');
+%         % canny_output = edge(img,'Prewitt');
+% source: https://youtu.be/mdcp72epXWw
+function [canny_output] = canny_edge_detection(img)
+
+% Preprocessing - Median filter
+p=1;
+pad=unit8(zeros(size(img)+2*(p-1)));
+
+for x=1:size(img, 1)
+    for y=1:size(img, 2)
+        pad(x+p-1, y+p-1) = img(x, y);
+    end
+end
+
+for i=1:size(pad, 1)-(p-1)
+    for j=1:size(pad, 2)-(p-1)
+        kernel = uint8(ones((p)^2, 1));
+        t=1;
+        for x=1:p
+            for y=1:p
+                kernel(t) = pad(i+x-1, j+y-1);
+                t = t+1
+            end
+        end
+        filt = sort(kernel);
+        out(i,j) = filt(ceil(((p)^2)/2));
+    end
+end
+
+figure;
+imshow(out);
+title('Median Filtered');
+
+img = double(img);{
+counts, x]
+
+
+
+canny_output = img;
+
+end
+%     end
+% end
