@@ -1,0 +1,43 @@
+Bild importieren
+Bild zuschneiden:
+File Select Dialog
+https://kr.mathworks.com/help/matlab/ref/uigetfile.html?searchHighlight=uigetfil
+Cut IMG
+https://de.mathworks.com/help/images/ref/imcrop.html?searchHighlight=imcrop
+Resize IMG
+https://de.mathworks.com/help/matlab/ref/imresize.html?searchHighlight=imresize
+
+Gauß-Filter um rauschen zu entfernen
+https://de.mathworks.com/help/images/ref/fspecial.html?searchHighlight=fspecial
+Empfehlung von Matlab:
+https://de.mathworks.com/help/images/ref/imgaussfilt.html
+oder
+https://de.mathworks.com/help/images/ref/imgaussfilt3.html
+
+Kontrast
+https://de.mathworks.com/help/images/ref/imadjust.html?s_tid=srchtitle
+
+Binärebild machen
+https://de.mathworks.com/help/images/ref/im2bw.html?searchHighlight=im2bw
+von matlab empfohlen:
+https://de.mathworks.com/help/images/ref/imbinarize.html
+
+Objekte auflisten
+https://de.mathworks.com/help/images/ref/bwlabel.html?searchHighlight=bwlabel
+
+Objekt-schwerpunkte finden
+https://de.mathworks.com/help/images/ref/regionprops.html?searchHighlight=regionprops
+
+Rechtek zeichnen
+https://de.mathworks.com/help/matlab/ref/rectangle.html?searchHighlight=rectangle
+
+K-Means-Clustering methode zum Filtern der Objekte
+https://de.mathworks.com/help/stats/kmeans.html?searchHighlight=kmeans
+
+Objekte Sortieren
+https://de.mathworks.com/help/matlab/ref/double.sortrows.html?searchHighlight=sortrows
+
+Bild Rotieren
+https://de.mathworks.com/help/images/ref/imrotate.html?searchHighlight=imrotate
+
+Berechnung der Winkel und Punkte...
