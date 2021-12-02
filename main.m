@@ -1,207 +1,150 @@
-% % % ****************************************
-% % % *****************Max********************
-% % % ****************************************
-
 clc
 clear variables
 close all
 
-BW = imread('img_resource/blog.jpg');
+I = imread('img_resource/ampel_wien.jpeg');
+% I = imread('img_resource/blog.jpg');
 
-imshow(BW,"Parent",gca)
+I = imcomplement(I); % Bild Invertierung funktioniert noch nicht
+imshow(I,"Parent",gca)
+pos = customWait(drawpolygon('Position',[75 75; 75 205; 320 205; 320 75]));
 
-pos = customWait(drawpolygon('Position',[0.5 0.5; 0.5 100.5; 100.5 100.5;100.5 0.5;]));
-
-[height, width,color] = size(BW);
-
-% pos = [posRel(:,1) * width,posRel(:,2) * height]
+heighta = abs(pos(1,1) - pos(3, 1))
+widtha = abs(pos(1,2) - pos(3, 2))
+[height, width, color] = size(I);
 
 orig = [0 0; 0 height; width height ; width 0];
 
-
 H = invert(fitgeotrans(orig,pos,'projective'));
-J = imwarp(BW,H,'OutputView',imref2d(size(BW)));
-imshow(J)
 
+J = imwarp(I,H,'OutputView',imref2d(size(I)));
+J = imresize(J, [widtha heighta]);
+J = imresize(J, 1000/heighta);
+
+imshow(J);
 
 BW = im2gray(J);
-BW = medfilt2(BW,[5,5]);
+BW = medfilt2(BW,[5, 5]);
 BW = imgaussfilt(BW,5); % smoth img
-
 
 binaryThreshhold = 0.5;
 BW = imbinarize(im2gray(BW),binaryThreshhold);
 
-
 BW = medfilt2(BW,[5,5]);
 
-
-
-CC = bwconncomp(BW);
-
-
-numPixels = cellfun(@numel,CC.PixelIdxList);
-
-
-[biggest,idx] = max(numPixels);
-
-pixels = CC.PixelIdxList{[numPixels > 10]};
-
-BW(pixels) = 0;
-
 figure;
 imshow(BW);
+title('Filter Only');
 
-% og = BW
+if sum(BW(:) == 1) > sum(BW(:) ==0)
+    BW = imcomplement(BW);
+    imshow(BW);
+    title('Filters Only + Inverted');
+end
+% CC = bwconncomp(BW);
+% numPixels = cellfun(@numel,CC.PixelIdxList);
 %
-% se = strel('disk',5); % sphere
-% for i=0:2
-% BW = imdilate(BW, se);
-% BW = imerode(BW, se);
-% end
-
+% med = median(numPixels);
+%
+% [biggest,idx] = max(numPixels);
+%
+% pixels = CC.PixelIdxList{[numPixels > medPixelIdxList]};
+%
+% BW(pixels) = 0; % 0 replaced with a 1 to avoid losing circles
+%
+% img = ones(size(BW));
+% img(pixels) = 0;
+%
 % figure;
-% montage([og, BW]);
-figure;
-imshow(BW);
+% imshow(img);
 
 % % % ****************************************
 % % % ***************ADRIAN*******************
 % % % ****************************************
 
-% Bild wird auf der Variable I bearbeitet und gespeichert
+% Bild wird auf der Variable BW bearbeitet und gespeichert
 
 % Bild einlesen
 
 E = edge(BW);
-[centers, radii, metric] = imfindcircles(E, [6, 50])
+
+% % https://de.mathworks.com/help/images/ref/regionprops.html?searchHighlight=regionprops
+s = regionprops(BW,'BoundingBox');
+bbox = cat(1,s.BoundingBox);
+
+% bbox = rmoutliers(bbox);
+figure;
+imshow(E);
+hold on
+width = [0];
+height = [0];
+boxsizes = [0];
+% plot(centroids(:,1),centroids(:,2),'b*');
+for i=1:size(bbox,1)
+    rectangle('Position',[bbox(i,1) bbox(i,2) bbox(i,3) bbox(i,4)],'EdgeColor','r');
+    boxsizes(i) = sqrt(bbox(i,3) * bbox(i,3) + bbox(i,4) * bbox(i,4));
+end
+hold off
+
+med = median(boxsizes)/2;
+
+se = strel('disk', round(med/4));
+for i=0:10
+    BW = imerode(BW, se);
+    BW = imdilate(BW, se);
+end
 
 imshow(BW);
-viscircles(centers, radii);
 
-deviationPercent = 0.05;
+stats = regionprops('table',BW,'Centroid',...
+    'MajorAxisLength','MinorAxisLength');
+centers = stats.Centroid;
+diameters = mean([stats.MajorAxisLength stats.MinorAxisLength],2);
+radii = diameters/2;
 
-originPoints = 0;
-countOrigins = 0;
-for i = 1:size(centers,1)
-    
-    % search for 2 points in the same horizontal line
-    countHoriz = 0;
-    horiz1 = 0;
-    horiz2 = 0;
-    for j = 1:size(centers,1)
-        deviation = abs(centers(j,1)-centers(i,1))*deviationPercent;
-        if (centers(i,2) < centers(j,2)+deviation && centers(i,2) > centers(j,2)-deviation)
-            countHoriz=countHoriz+1;
-            if(countHoriz == 1 && horiz1 ~= 0)
-                horiz1 = centers(j,2);
-            end
-            if(countHoriz == 2)
-                horiz2 = centers(j,2);
-                break
-            end
-        end
-    end
-    
-    % search for a point in the same vertical line
-    vert = 0;
-    for j = 1:size(centers,1)
-        deviation = abs(centers(j,2)-centers(i,2))*deviationPercent;
-        if(centers(i,1) < centers(j,1)+deviation && centers(i,1) > centers(j,1)-deviation)
-            vert = 1;
-            break
-        end
-    end
-    
-    if (countHoriz == 2 && vert == 1)
-        if(originPoints == 0)
-            originPoints = [centers(i,:), radii(i)];
-        else
-            originPoints = [originPoints;centers(i,:), radii(i)];
-        end
-    end
-    
-end
-originPoints
+hold on
+viscircles(centers,radii);
+hold off
 
-horizLines = 0;
-% search for similar horizontal alignment between originPoints and count
-% similar lines in horizLines
-for i = 1:size(originPoints,1)
-    for j = 1:size(originPoints:1)
-        % check for similar lines
-        if(i~=j && originPoints(i,1) < originPoints(j,1)+(originPoints(j,3)*1.5) ...
-                && originPoints(i,1) > originPoints(j,1)-(originPoints(j,3)*1.5))
-            
-            % if empty, create new line
-            if(horizLines == 0)
-                horizLines = [originPoints(i,1),i, 1];
-            else
-                added = false;
-                % if line already in horizLines add to count
-                for k = 1:size(horizLines,1)
-                    
-                    if(horizLines(k,1) < originPoints(i,1)+(originPoints(i,3)*1.5) ...
-                            && horizLines(k,1) > originPoints(i,1)-(originPoints(i,3)*1.5))
-                        horizLines(k,3) = horizLines(k,3)+1;
-                        added = true;
-                        break
-                    end
-                end
-                % else add new line to horizLines
-                if (added == false)
-                    horizLines = [horizLines;originPoints(i,1),i,1];
-                end
-            end
-        end
-    end
-end
-horizLines
+% Connect Dots
+[height, width] = size(BW);
 
-% get originPoint of horizontalLine with most originPoint alignments
-highestCount = 0;
-highestPointIndex = 0;
+imshow(BW);
+title("Area Selection");
+hold on
 
-for i = 1:size(horizLines,1)
-    if(highestCount<horizLines(i,3))
-        highestCount = horizLines(i,3);
-        highestIndex = horizLines(i,2);
-    end
-    
-end
-gridOrigin = originPoints(highestIndex,:)
+[count, horizontal_lines, vertical_lines] = draw_lines_and_circles(centers, radii, width, height);
+count
+horizontal_lines
+vertical_lines
+
+
+horizontal_diff = find_differences(horizontal_lines, BW, width, height, 0)
+vertical_diff = find_differences(vertical_lines, BW, width, height, 1)
+
+figure;
+plot(horizontal_diff, 1, 'ro', vertical_diff, 2, 'ro');
+title('Differences');
+
+hold off
+
+min = round(med*0.4);
+max = round(med*1.8);
+[centers, radii, metric] = imfindcircles(E, [min, max]); % ; can be removed
+
+
+figure
+imshow(BW);
+title("Line Selection");
+hold on
+[count, horizontal_lines, vertical_lines] = draw_lines_and_circles(centers, radii, width, height);
+count
+horizontal_lines
+vertical_lines
+hold off
 
 
 
-
-pointsInLine = gridOrigin;
-pointsInGrid = [gridOrigin,1];
-for i = 1:size(centers,1)
-    deviation = abs(gridOrigin(1,1)-centers(i,1))*deviationPercent;
-    if(gridOrigin(1,2)<centers(i,2)+deviation && gridOrigin(1,2)>centers(i,2)-deviation)
-        pointsInGrid = [pointsInGrid;centers(i,:),radii(i),1];
-    end
-end
-lowestDiff = size(BW,1);
-% for i = 1:size(pointsInGrid,1)
-%     for j = 1:size(pointsInGrid)
-%         if(i~=j)
-%             if()
-%         end
-%     end
-% end
-characterPointDistance = lowestDiff
-
-pointsInGrid
-pointsInGrid(:,1:2)
-
-imshow(BW)
-% viscircles(gridOrigin(:,1:2), gridOrigin(:,3))
-viscircles(pointsInGrid(:,1:2), pointsInGrid(:,3));
-
-viscircles(centers, radii)
-
-% imshow(viscircles(centers, radii));
 
 % % % Übersetzung in "Binär"
 % % % Durch Vertikalen & Horizontale Projektion Z.B.
@@ -211,6 +154,7 @@ viscircles(centers, radii)
 % 01    " ."
 % 10    ". "
 % 00    "  "
+
 
 % % % ****************************************
 % % % ***************FELIX********************
@@ -245,4 +189,60 @@ if strcmp(evt.SelectionType,'double')
     uiresume;
 end
 
+end
+
+function [count, horizontal_lines, vertical_lines]= draw_lines_and_circles(centers, radii, width, height)
+
+daviationPercent = 0.09;
+count = 0;
+
+av_size = median(radii);
+vertical_lines = 0;
+horizontal_lines = 0;
+for time=1:2
+%     result_centers(1,:) = centers(1,:);
+%     result_radii(1) = radii(1);
+    line_count = 1;
+    unselected_circles = ones(size(radii));
+    for a=1:size(unselected_circles)
+        if unselected_circles(a)
+            unselected_circles(a) = 0;
+            viscircles(centers(a,:), radii(a), 'Color', 'r');
+            if time == 2
+                line([0 width], [centers(a, 2), centers(a, 2)], 'Color','blue');
+                horizontal_lines(line_count) = centers(a, 2);
+            else
+                line([centers(a, 1), centers(a, 1)], [0, height], 'Color','blue');
+                vertical_lines(line_count) = centers(a, 1);
+            end
+            line_count = line_count + 1;
+            for i=1:size(radii)
+                if unselected_circles(i) & a ~= i & (abs(centers(i, time)-centers(a, time))<=radii(i) | abs(abs(centers(i, time)-centers(a, time))-radii(i)) <= av_size * daviationPercent)
+                    count = count + 1;
+                    viscircles(centers(i, :), radii(i), 'Color', 'b');
+%                     result_centers(count, :) = centers(i, :);
+%                     result_radii(count) = radii(i);
+                    %                     pl = line([centers(a,1) centers(i, 1)], [centers(a,2), centers(i,2)], 'Color','red');
+                    unselected_circles(i) = 0;
+                end
+            end
+        end
+    end
+end
+end
+
+function differences = find_differences(lines, I, width, height, a)
+
+
+
+line_array = sort(lines);
+differences = ones([size(lines, 2)-1, 1]);
+for i=1:size(line_array, 2)-1
+    differences(i) = abs(line_array(i) - line_array(i+1));
+    if a
+        line([line_array(i), line_array(i+1)], [width/(i+1), width/(i+1)], 'Color','yellow');
+    else
+        line([height/(i+1), height/(i+1)], [line_array(i), line_array(i+1)], 'Color','yellow');
+    end
+end
 end
