@@ -2,10 +2,10 @@ clc
 clear variables
 close all
 
-I = imread('img_resource/ampel_wien.jpeg');
+I = imread('img_resource/buch1.jpg');
 % I = imread('img_resource/blog.jpg');
 % I = imread('img_resource/braille (2).jpeg');
-I = imread('img_resource/braille (3).jpeg');
+% I = imread('img_resource/buch2.jpg');
 % I = imread('coloredChips.png');
 
 imshow(I,"Parent",gca);
