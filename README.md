@@ -15,6 +15,8 @@ Felix Teutsch | Giulia Gallico | Max Bambasek | Adrian Kurzbauer | Marc Putz
 ## Projektbeschreibung
 Dieses Projekt entstand aus der Idee heraus, Angehörigen und Bekannten von Sehbeeinträchtigten das Lesen von Büchern in Braille zu ermöglichen, indem sie in das deutsche Alphabet übersetzt werden.
 
+Die Bilder werden nach folgendem Pipeline verarbeitet, so dass jedes Bild von der Brailleschrift ins Deutsche übersetzt werden können.
+
 ### Pipeline:
 * Bild Zuscheiden und Transformieren
 * Grauwert und Schwellwert Filter
