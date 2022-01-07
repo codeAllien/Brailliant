@@ -2,99 +2,10 @@ clc
 clear variables
 close all
 
-I = imread('Datensatz/buch1.jpg');
-% I = imread('Datensatz/blog.jpg');
-% I = imread('Datensatz/braille (2).jpeg');
-% I = imread('Datensatz/buch2.jpg');
+I = imread('img_resource/bahnhof.jpg');
 
-imshow(I,"Parent",gca);
-
-polygon = [75 75; 75 205; 320 205; 320 75];
-
-% polygon = [...
-%     
-% 575         651;...
-% 575         902;...
-% 1049         902;...
-% 1049         651;...
-% ];
-
-% polygon = [...
-%     0.5760    0.6510;...
-%     0.5760    0.7905;...
-%     1.0490    0.7905;...
-%     1.0490    0.6510;...
-%     ];
-% polygon(:) = 1.0e+03 .* polygon(:);
-
-
-
-
-
-pos = customWait(drawpolygon('Position',polygon));
-
-% Polygon Optimisation (Ensures that it is always a sqare by using the
-% maximal parameter
-top_left(:,:) = [min(pos(:,1)) min(pos(:,2))];
-top_right(:,:) = [min(pos(:,1)) max(pos(:,2))];
-bottom_left(:,:) = [max(pos(:,1)) min(pos(:,2))];
-bottom_right(:,:) = [max(pos(:,1)) max(pos(:,2))];
-
-new_pos(:,:) = [top_left; top_right; bottom_left; bottom_right];
-pos = new_pos;
-
-
-round(pos)
-
-heighta = abs(pos(1,1) - pos(3, 1));
-widtha = abs(pos(1,2) - pos(4, 2));
-[height, width, color] = size(I);
-
-orig = [0 0; 0 height; width 0; width height];
-
-H = invert(fitgeotrans(orig,pos,'projective'));
-
-J = imwarp(I,H,'OutputView',imref2d(size(I)));
-J = imresize(J, [widtha heighta]);
-J = imresize(J, 1000/heighta);
-
-imshow(J);
-
-BW = im2gray(J);
-BW = imadjust(BW);
-BW = medfilt2(BW,[5, 5]);
-BW = imgaussfilt(BW,5); % smoth img
-
-binaryThreshhold = 0.5;
-BW = imbinarize(im2gray(BW),binaryThreshhold);
-
-BW = medfilt2(BW,[5,5]);
-
-% figure;
-imshow(BW);
-title('Filter Only');
-
-if sum(BW(:) == 1) > sum(BW(:) == 0)
-    BW = imcomplement(BW);
-    imshow(BW);
-    title('Filters Only + Inverted');
-end
-% CC = bwconncomp(BW);
-% numPixels = cellfun(@numel,CC.PixelIdxList);
-%
-% med = median(numPixels);
-%
-% [biggest,idx] = max(numPixels);
-%
-% pixels = CC.PixelIdxList{[numPixels > medPixelIdxList]};
-%
-% BW(pixels) = 0; % 0 replaced with a 1 to avoid losing circles
-%
-% img = ones(size(BW));
-% img(pixels) = 0;
-%
-% figure;
-% imshow(img);
+I = image_processing(I);
+BW = I;
 
 % % % ****************************************
 % % % ***************ADRIAN*******************
@@ -129,40 +40,37 @@ med = median(boxsizes)/2;
 figure;
 imshow(BW);
 title('Bevore');
+% 
+% figure;
+% imshow(BW);
+% title('After');
+% hold on
+% for i=1:10
+%     stats = regionprops('table',BW,'Centroid',...
+%         'MajorAxisLength','MinorAxisLength');
+%     centers = stats.Centroid;
+%     diameters = mean([stats.MajorAxisLength stats.MinorAxisLength],2);
+%     radii = diameters/2;
+%     
+%     % hold on
+%     % viscircles(centers,radii);
+%     % hold off
+%     
+%     % Connect Dots
+%     [height, width] = size(BW);
+%     
+%     % imshow(BW);
+%     % title("Area Selection");
+%     % hold on
+%     
+%     [count, horizontal_lines, vertical_lines, angle] = draw_lines_and_circles(centers, radii, width, height);
+%     %     "Rotate IMG by " + mean(angle)+ " deg."
+%     BW = imrotate(BW, mean(angle));
+%     BW = smooth_img(BW, round(med/4), 2);
+%     BW = medfilt2(BW,[5,5]);
+% end
+% hold off
 
-figure;
-imshow(BW);
-title('After');
-hold on
-for i=1:10
-    stats = regionprops('table',BW,'Centroid',...
-        'MajorAxisLength','MinorAxisLength');
-    centers = stats.Centroid;
-    diameters = mean([stats.MajorAxisLength stats.MinorAxisLength],2);
-    radii = diameters/2;
-    
-    % hold on
-    % viscircles(centers,radii);
-    % hold off
-    
-    % Connect Dots
-    [height, width] = size(BW);
-    
-    % imshow(BW);
-    % title("Area Selection");
-    % hold on
-    
-    [count, horizontal_lines, vertical_lines, angle] = draw_lines_and_circles(centers, radii, width, height);
-    %     "Rotate IMG by " + mean(angle)+ " deg."
-    BW = imrotate(BW, mean(angle));
-    BW = smooth_img(BW, round(med/4), 2);
-    BW = medfilt2(BW,[5,5]);
-end
-hold off
-
-count
-horizontal_lines
-vertical_lines
 
 BW = smooth_img(BW, round(med/4), 4);
 
@@ -322,30 +230,6 @@ result = braille_translate(braille_code ,"german")
 % % % ****************************************
 % % % ***************FUNCTION*****************
 % % % ****************************************
-function pos = customWait(hROI)
-
-% Listen for mouse clicks on the ROI
-l = addlistener(hROI,'ROIClicked',@clickCallback);
-
-% Block program execution
-uiwait;
-
-% Remove listener
-delete(l);
-% Return the current position
-pos = hROI.Position;
-%pos(:,1) = (pos(:,1) - hROI.Parent.XLim(1)) / (hROI.Parent.XLim(2) - hROI.Parent.XLim(1));
-%pos(:,2) = (pos(:,2) - hROI.Parent.YLim(1)) / (hROI.Parent.YLim(2) - hROI.Parent.YLim(1));
-
-end
-
-function clickCallback(~,evt)
-
-if strcmp(evt.SelectionType,'double')
-    uiresume;
-end
-
-end
 
 function [count, horizontal_lines, vertical_lines, angle]= draw_lines_and_circles(centers, radii, width, height)
 
@@ -536,13 +420,12 @@ function [binary_code] = get_binary(im_data, padding)
 [height width count] = size(im_data)
 segment_height = (height - padding*2)/2;
 segment_width = (width - padding*2);
-
+figure;
 for i=1:count
     I = im_data(:,:,i);
     s = regionprops(I,'BoundingBox');
     bbox = cat(1,s.BoundingBox);
     binary_for_letter = zeros(6);
-    figure;
     imshow(I);
     
     line([0, width], [padding, padding], 'Color','blue');

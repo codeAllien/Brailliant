@@ -8,7 +8,6 @@ function [result] = braille_translate(input, language)
 %     case 'german'
 %
 
-% Probleme mit IJSTW
 letter_pairs = [...
     "100000" 'a'; "101000" 'b'; "110000" 'c'; "110100" 'd';...
     "100100" 'e'; "111000" 'f'; "111100" 'g'; "101100" 'h';...
@@ -20,14 +19,21 @@ letter_pairs = [...
     "101101" 'ü'; "011011" 'ß'; "010011" 'ie'; "110001" 'ei';...
     "101001" 'eu'; "010010" 'äu'; "100001" 'au'; "110101" 'ch';...
     "100101" 'sch'; "011111" 'st'; "111111" '#'; "000000" ' ';...
-    "000010" '.'; "000010" '.'; "001000" ','; "001010" ';';...
-    "001100" ':'; "001001" '?'; "001110" '!'...
-    ];
+    "000010" '.'; "001000" ','; "001010" ';'; "001100" ':';...
+    "001001" '?'; "001110" '!'; "000111" '«'; "001011" '»';...
+    "001101" '/'; "001110" '+'; "000110" '*'; "111001" '`';...
+    "111101" '^'; "000011" "-"];
 
-
+number_pairs = [...
+    "100000" '1'; "101000" '2'; "110000" '3'; "110100" '4';...
+    "100100" '5'; "111000" '6'; "111100" '7'; "101100" '8';...
+    "011000" '9'; "011100" '0';...
+    "001000" '1.'; "001010" '2.'; "001100" '3.'; "001101" '4.';...
+    "001001" '5.'; "001110" '6.'; "001111" '7.'; "001011" '8.';...
+    "000110" '9.'; "000111" '0.'];
 
 special_keys = [...
-    "000011" "-"; "000001" "_"; "000100" "|"
+    "000011" "-"; "000100" "|"
     ];
 
 double_char = containers.Map(...
@@ -35,6 +41,7 @@ double_char = containers.Map(...
     {'.'});
 
 letters = create_map(letter_pairs);
+numbers = create_map(number_pairs);
 punctuation = create_map(special_keys);
 
 %     case "english"
@@ -48,7 +55,9 @@ result = "";
 swap = 1;
 upper_case = 0;
 all_caps = 0;
-numbers = 0;
+print_numbers = 0;
+open_bracket = 0;
+
 
 % Number Code 010111
 % Percentage 010111 -> 000111
@@ -59,17 +68,31 @@ input_size = temp(1);
 skip_steps = 0; % increase to skip loop and therefore symbols in the array
 
 for i=1:input_size
+    % Skip eventual steps
     if skip_steps > 0
         skip_steps = skip_steps - 1;
         continue;
     end
-    if isKey(letters, string(input(i)))  % Check if the key is a regular value
-        temp_char = letters(string(input(i)));
-    elseif string(input(i)) == "000001" % Check for capital code 000001 or _ code
-        if i+1<=input_size & string(input(i+1)) == "000011"
-            temp_char = "_";
-            result = result + temp_char;
-        elseif upper_case
+    
+    if string(input(i)) == "000001" % Check for capital code 000001 or _, *
+        if i+1<=input_size
+            temp_char = "";
+            switch(string(input(i+1)))
+                case '000110'
+                    temp_char = "*";
+                case "000011"
+                    temp_char = "_";
+                case "000001"
+                    all_caps = 1;
+                    continue;
+            end
+            if isempty(temp_char)
+                result = result + temp_char;
+                skip_steps = skip_steps + 1;
+                continue;
+            end
+        end
+        if upper_case % check if it is already set as upper case, if yes, everything is supposed to be caps
             all_caps = 1;
         else
             upper_case = 1;
@@ -86,16 +109,30 @@ for i=1:input_size
             result = result + temp_char;
             continue;
         end
-        numbers = mod(numbers + 1, 2);
+        print_numbers = mod(print_numbers + 1, 2);
         continue;
+    end
+    
+    if print_numbers % check if number is supposed to be printed
+        if isKey(numbers, string(input(i)))
+            temp_char = numbers(string(input(i))); % mod(double(char(temp_char))-96, 10);
+        else
+            temp_char = "*EN*"; % Error with the numbers
+        end
+    elseif isKey(letters, string(input(i)))  % Check if the key is a regular value
+        temp_char = letters(string(input(i)));
+    elseif string(input(i)) == "001111" % check for open or closed bracked
+        temp_char = "(";
+        if open_bracket
+            temp_char = ")";
+        end
+        open_bracket = mod(open_bracket + 1, 2);
     else
-        temp_char = "ERROR";
+        temp_char = "!*";
     end
     if upper_case || all_caps
         temp_char = upper(temp_char);
         upper_case = 0;
-    elseif numbers
-        temp_char = mod(double(char(temp_char))-96, 10);
     end
     result = result + temp_char;
 end
