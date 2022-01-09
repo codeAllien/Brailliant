@@ -19,7 +19,7 @@ end
 display_result(I, 'Selected Area', show_steps, keep_steps);
 
 % % Grayscale
-I = im2gray(I);
+I = image2gray(I);
 display_result(I, 'Gray Scale', show_steps, keep_steps);
 
 % % Stretch Contrast (maximise it)
@@ -50,7 +50,7 @@ display_result(I, 'Gaussian Filter', show_steps, keep_steps);
 
 % % Binarise Image
 t = 0.4;
-I_inverted = create_binary(imcomplement(I), t);
+I_inverted = create_binary(imagecomplement(I), t);
 I = create_binary(I, t);
 
 % Determin the optimal binarisation
@@ -66,7 +66,7 @@ display_result(I, 'Binarise Image', show_steps, keep_steps);
 
 % Ensure that the dots are white
 if sum(I(:) == 1) > sum(I(:) == 0)
-    I = imcomplement(I);
+    I = imagecomplement(I);
     display_result(I, 'Filters + Inverted', show_steps, keep_steps);
 end
 
