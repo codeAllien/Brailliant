@@ -2,9 +2,14 @@ clc
 clear variables
 close all
 
-I = imread('img_resource/bahnhof.jpg');
+I = imread('img_resource/blog.jpg');
+% I = imread('img_resource/bahnhof.jpg');
+% I = imread('img_resource/ampel_wien.jpeg');
+% I = imread('img_resource/braille (2).jpeg');
 
 I = image_processing(I);
+
+
 BW = I;
 
 % % % ****************************************
@@ -26,9 +31,7 @@ bbox = cat(1,s.BoundingBox);
 % figure;
 imshow(E);
 hold on
-width = [0];
-height = [0];
-boxsizes = [0];
+boxsizes = zeros(size(bbox, 1),1);
 % plot(centroids(:,1),centroids(:,2),'b*');
 for i=1:size(bbox,1)
     rectangle('Position',[bbox(i,1) bbox(i,2) bbox(i,3) bbox(i,4)],'EdgeColor','r');
@@ -39,37 +42,20 @@ hold off
 med = median(boxsizes)/2;
 figure;
 imshow(BW);
-title('Bevore');
-% 
-% figure;
-% imshow(BW);
-% title('After');
-% hold on
-% for i=1:10
-%     stats = regionprops('table',BW,'Centroid',...
-%         'MajorAxisLength','MinorAxisLength');
-%     centers = stats.Centroid;
-%     diameters = mean([stats.MajorAxisLength stats.MinorAxisLength],2);
-%     radii = diameters/2;
-%     
-%     % hold on
-%     % viscircles(centers,radii);
-%     % hold off
-%     
-%     % Connect Dots
-%     [height, width] = size(BW);
-%     
-%     % imshow(BW);
-%     % title("Area Selection");
-%     % hold on
-%     
-%     [count, horizontal_lines, vertical_lines, angle] = draw_lines_and_circles(centers, radii, width, height);
-%     %     "Rotate IMG by " + mean(angle)+ " deg."
-%     BW = imrotate(BW, mean(angle));
-%     BW = smooth_img(BW, round(med/4), 2);
-%     BW = medfilt2(BW,[5,5]);
-% end
-% hold off
+
+stats = regionprops('table',BW,'Centroid',...
+    'MajorAxisLength','MinorAxisLength');
+centers = stats.Centroid;
+diameters = mean([stats.MajorAxisLength stats.MinorAxisLength],2);
+radii = diameters/2;
+% Connect Dots
+[height, width] = size(BW);
+
+[~, ~, ~, angle] = draw_lines_and_circles(centers, radii, width, height);
+angle(:)
+    "Rotate IMG by " + mean(angle) + " deg."
+BW = imrotate(BW, mean(angle));
+hold off
 
 
 BW = smooth_img(BW, round(med/4), 4);
@@ -86,6 +72,7 @@ radii = diameters/2;
 [height, width] = size(BW);
 [count, horizontal_lines, vertical_lines, angle] = draw_lines_and_circles(centers, radii, width, height);
 
+if count ~= 0
 
 horizontal_diff = find_differences(horizontal_lines, BW, width, height, 0)
 vertical_diff = find_differences(vertical_lines, BW, width, height, 1)
@@ -94,7 +81,6 @@ figure;
 plot(horizontal_diff, 1, 'ro', vertical_diff, 2, 'ro');
 title('Differences');
 
-"now"
 size(horizontal_diff)
 size(horizontal_diff, 1)
 remove_min = 0;
@@ -230,6 +216,10 @@ result = braille_translate(braille_code ,"german")
 % % % ****************************************
 % % % ***************FUNCTION*****************
 % % % ****************************************
+
+else
+    warning('Warning! No braille dots detected in input image!');
+end
 
 function [count, horizontal_lines, vertical_lines, angle]= draw_lines_and_circles(centers, radii, width, height)
 

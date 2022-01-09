@@ -6,7 +6,7 @@ close all
 
 I = imread('img_resource/ampel_wien.jpeg');
 % I = imread('img_resource/blog.jpg');
-I = imread('img_resource/braille (2).jpeg');
+% I = imread('img_resource/braille (2).jpeg');
 % I = imread('img_resource/bahnhof.jpg');
 % I = imread('img_resource/bahnhof (2).jpg');
 % I = imread('coloredChips.png');
@@ -77,17 +77,17 @@ title('Rotated Optimised');
 % % Rotation Test
 [width, height] = size(BW);
 
-pos = zeors(4, 4);
+pos = zeros(4, 4);
 count = 0;
 bbox = sortrows(sortrows(bbox, 1, 'ascend'), 5, 'ascend');
-for i = 1:size(bbox, 1)
-    switch(count)
-        case 0
-            count = 1;
-            pos(count) = bbox(i, 1:4); 
-        case 1
-            if i+1 < 
-end
+% for i = 1:size(bbox, 1)
+%     switch(count)
+%         case 0
+%             count = 1;
+%             pos(count) = bbox(i, 1:4); 
+%         case 1
+%             if i+1 < i
+% end
 orig = [0 0; 0 height; width height ; width 0];
 
 
@@ -192,7 +192,7 @@ for i=2:size(bbox, 1)
     if bbox(i-1, 5) ~= bbox(i, 5) | i == size(bbox, 1)
         if count ~= 0
             temp = angle(bbox(i-1, 5)) / count;
-            angle(bbox(i-1, 5)) = -temp;
+            angle(bbox(i-1, 5)) = temp;
         end
         count = 0;
     end
