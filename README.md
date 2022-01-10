@@ -20,7 +20,7 @@ Die Bilder werden nach folgendem Pipeline verarbeitet, so dass jedes Bild von de
 ### Pipeline:
 * Bild Zuscheiden und Transformieren
 * Grauwert und Schwellwert Filter
-* Rauschunterdrückung mit Mittelwerts Filter
+* Rauschunterdrückung mit Mittelwert- und Gauss-Filter
 * Clusterfilterung
 * Auslesen der Braille Punkte
 * Braille Übersetzung
