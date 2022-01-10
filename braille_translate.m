@@ -128,7 +128,7 @@ for i=1:input_size
         end
         open_bracket = mod(open_bracket + 1, 2);
     else
-        temp_char = "!*";
+        temp_char = "⚠";
     end
     if upper_case || all_caps
         temp_char = upper(temp_char);

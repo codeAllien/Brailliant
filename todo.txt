@@ -1,2 +1,30 @@
-Image Rotation Optimisation
-Character Detection optimisation, suport single characters
+Implement Functions:
+Wichtig:
+
+
+Weniger:
+
+
+
+Alternativ:
+k_means
+
+
+Felix:
+imerode
+imdialate
+
+medianfilter
+regionprops
+
+
+Max:
+imrotate
+imcrop
+imresize
+regionprops
+
+
+Marc:
+imcomplement
+im2gray

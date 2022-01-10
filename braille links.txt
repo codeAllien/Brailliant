@@ -41,3 +41,15 @@ Bild Rotieren
 https://de.mathworks.com/help/images/ref/imrotate.html?searchHighlight=imrotate
 
 Berechnung der Winkel und Punkte...
+
+
+
+
+
+Wichtige Links:
+Matlab k-menas
+https://de.mathworks.com/matlabcentral/fileexchange/24616-kmeans-clustering?s_tid=FX_rc2_behav
+Korean Blog
+https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=22wowow22&logNo=220819500053
+GitHub Project
+https://github.com/mitzsu/Braille-Matlab

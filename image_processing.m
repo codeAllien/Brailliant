@@ -19,7 +19,7 @@ end
 display_result(I, 'Selected Area', show_steps, keep_steps);
 
 % % Grayscale
-I = image2gray(I);
+I = im2gray(I);
 display_result(I, 'Gray Scale', show_steps, keep_steps);
 
 % % Stretch Contrast (maximise it)
@@ -50,7 +50,7 @@ display_result(I, 'Gaussian Filter', show_steps, keep_steps);
 
 % % Binarise Image
 t = 0.4;
-I_inverted = create_binary(imagecomplement(I), t);
+I_inverted = create_binary(imcomplement(I), t);
 I = create_binary(I, t);
 
 % Determin the optimal binarisation
@@ -66,14 +66,13 @@ display_result(I, 'Binarise Image', show_steps, keep_steps);
 
 % Ensure that the dots are white
 if sum(I(:) == 1) > sum(I(:) == 0)
-    I = imagecomplement(I);
+    I = imcomplement(I);
     display_result(I, 'Filters + Inverted', show_steps, keep_steps);
 end
 
 % Budget border
 I = imrotate(I, 1);
 I = imrotate(I, -1);
-
 
 % % Optimise Image
 s = regionprops(I,'BoundingBox');
@@ -85,13 +84,13 @@ for i=1:size(bbox,1)
     if show_steps
         rectangle('Position',[bbox(i,1) bbox(i,2) bbox(i,3) bbox(i,4)],'EdgeColor','r');
     end
-    boxsizes(i) = sqrt(bbox(i,3) * bbox(i,3) + bbox(i,4) * bbox(i,4));
+    boxsizes(i) = bbox(i,3)/2;
 end
 
-med_size = mean(boxsizes(:))*0.12;
+med_size = mean(boxsizes(:))/5
 
 % % Optimise Blobs and remove small ones / errors
-I = erode_and_dialate(I, med_size, 5);
+I = erode_and_dialate(I, med_size, round(med_size));
 
 display_result(I, 'Eroded and Dialated Image', show_steps, keep_steps);
 
@@ -155,10 +154,9 @@ display_result(I, 'Eroded and Dialated Image', show_steps, keep_steps);
 
 % % Blob Modification
     function I = erode_and_dialate(I, size, times)
-        se = strel('disk', round(size));
         for a=1:times
-            I = imerode(I, se);
-            I = imdilate(I, se);
+            I = f_erode(I, 'circle', round(size));
+            I = f_dialate(I, 'circle', round(size));
         end
     end
 end
