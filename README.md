@@ -33,3 +33,4 @@ Die Bilder werden nach folgendem Pipeline verarbeitet, so dass jedes Bild von de
 [Matlab K-Menas](https://de.mathworks.com/matlabcentral/fileexchange/24616-kmeans-clustering?s_tid=FX_rc2_behav)  
 [Mittelwert-Filter](https://de.mathworks.com/matlabcentral/answers/36182-how-to-do-median-filter-without-using-medfilt2)  
 [Gauß-Filter](https://stackoverflow.com/questions/13193248/how-to-make-a-gaussian-filter-in-matlab/13205520)  
+[Contrast Stretching](https://homepages.inf.ed.ac.uk/rbf/HIPR2/stretch.htm)
