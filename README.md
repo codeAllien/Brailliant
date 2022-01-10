@@ -28,8 +28,8 @@ Die Bilder werden nach folgendem Pipeline verarbeitet, so dass jedes Bild von de
 ## Literatur
 [Idee aus dem Blog 1](https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=22wowow22&logNo=220819500053)  
 [Idee aus dem Blog 2](https://homepages.inf.ed.ac.uk/rbf/HIPR2/stretch.htm)  
-[GitHub Project](https://github.com/mitzsu/Braille-Matlab) 
-[Graufilter](https://de.mathworks.com/help/matlab/ref/rgb2gray.html#buiz8mj-9)  
+[GitHub Project](https://github.com/mitzsu/Braille-Matlab)      
+[Graufilter](https://de.mathworks.com/help/matlab/ref/rgb2gray.html#buiz8mj-9)     
 [Matlab K-Menas](https://de.mathworks.com/matlabcentral/fileexchange/24616-kmeans-clustering?s_tid=FX_rc2_behav)  
 [Mittelwert-Filter](https://de.mathworks.com/matlabcentral/answers/36182-how-to-do-median-filter-without-using-medfilt2)  
 [Gauß-Filter](https://stackoverflow.com/questions/13193248/how-to-make-a-gaussian-filter-in-matlab/13205520)  
