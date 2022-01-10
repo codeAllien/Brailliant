@@ -1,3 +1,4 @@
+% Author Giulia
 function I_out = f_gauss_filter(I,N,sigma)
     % Rework the value inside the matrix image
     I = double(I);

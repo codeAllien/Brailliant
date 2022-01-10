@@ -34,8 +34,8 @@ display_result(I, 'Contrast Stretching', show_steps, keep_steps);
 corner_fix = I;
 
 % % Median Filter
-I =  medfilt2(I, 'symmetric');
-display_result(I, 'Median Filter', show_steps, keep_steps);
+ I =  f_median_filter(I);
+ display_result(I, 'Median Filter', 1, 1);
 
 % % Restore Corners broken by median filter
 I(I < 0.5) = corner_fix(I < 0.5);
