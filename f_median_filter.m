@@ -1,6 +1,5 @@
 % Author Giulia
 function I_out = f_median_filter(I)
-    I = imnoise(I, 'salt & pepper', 0.01);
     [r c] = size(I);
     Rep = zeros(r + 2, c + 2);
     for x = 2 : r + 1
