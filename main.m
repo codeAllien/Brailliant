@@ -2,7 +2,10 @@ clc
 clear variables
 close all
 
-I = imread('img_resource/bahnhof.jpg');
+I = imread('Datensatz/ampel.jpg');
+% I = imread('Datensatz/blog.jpg');
+% I = imread('Datensatz/braille (2).jpeg');
+% I = imread('Datensatz/buch2.jpg');
 
 I = image_processing(I);
 BW = I;
