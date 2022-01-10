@@ -20,22 +20,17 @@ Die Bilder werden nach folgendem Pipeline verarbeitet, so dass jedes Bild von de
 ### Pipeline:
 * Bild Zuscheiden und Transformieren
 * Grauwert und Schwellwert Filter
-* Rauschunterdrückung mit Mittelwerts Filter
+* Rauschunterdrückung mit Mittelwert- und Gauss-Filter
 * Clusterfilterung
 * Auslesen der Braille Punkte
 * Braille Übersetzung
 
 ## Literatur
-[File Select Dialog](https://kr.mathworks.com/help/matlab/ref/uigetfile.html?searchHighlight=uigetfil)  
-[Cut IMG](https://de.mathworks.com/help/images/ref/imcrop.html?searchHighlight=imcrop)  
-[Resize IMG](https://de.mathworks.com/help/matlab/ref/imresize.html?searchHighlight=imresize)  
-[Gauß-Filter um rauschen zu entfernen](https://de.mathworks.com/help/images/ref/fspecial.html?searchHighlight=fspecial)  
-[Empfehlung von Matlab](https://de.mathworks.com/help/images/ref/imgaussfilt.html) oder [link here](https://de.mathworks.com/help/images/ref/imgaussfilt3.html)  
-[Kontrast](https://de.mathworks.com/help/images/ref/imadjust.html?s_tid=srchtitle)  
-[Binärebild machen](https://de.mathworks.com/help/images/ref/im2bw.html?searchHighlight=im2bw) oder [von Matlab empfohlen](https://de.mathworks.com/help/images/ref/imbinarize.html)  
-[Objekte auflisten](https://de.mathworks.com/help/images/ref/bwlabel.html?searchHighlight=bwlabel)  
-[Objekt-schwerpunkte finden](https://de.mathworks.com/help/images/ref/regionprops.html?searchHighlight=regionprops)  
-[Rechtek zeichnen](https://de.mathworks.com/help/matlab/ref/rectangle.html?searchHighlight=rectangle)  
-[K-Means-Clustering methode zum Filtern der Objekte](https://de.mathworks.com/help/stats/kmeans.html?searchHighlight=kmeans)  
-[Objekte Sortieren](https://de.mathworks.com/help/matlab/ref/double.sortrows.html?searchHighlight=sortrows)  
-[Bild Rotieren](https://de.mathworks.com/help/images/ref/imrotate.html?searchHighlight=imrotate)  
+[Idee aus dem Blog 1](https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=22wowow22&logNo=220819500053)  
+[Idee aus dem Blog 2](https://homepages.inf.ed.ac.uk/rbf/HIPR2/stretch.htm)  
+[GitHub Project](https://github.com/mitzsu/Braille-Matlab)      
+[Graufilter](https://de.mathworks.com/help/matlab/ref/rgb2gray.html#buiz8mj-9)     
+[Matlab K-Menas](https://de.mathworks.com/matlabcentral/fileexchange/24616-kmeans-clustering?s_tid=FX_rc2_behav)  
+[Mittelwert-Filter](https://de.mathworks.com/matlabcentral/answers/36182-how-to-do-median-filter-without-using-medfilt2)  
+[Gauß-Filter](https://stackoverflow.com/questions/13193248/how-to-make-a-gaussian-filter-in-matlab/13205520)  
+[Contrast Stretching](https://homepages.inf.ed.ac.uk/rbf/HIPR2/stretch.htm)
