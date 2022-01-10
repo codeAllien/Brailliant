@@ -43,7 +43,7 @@ display_result(I, 'Fixed Corners', show_steps, keep_steps);
 
 % % Gaussian Filter
 filter_size = 5;
-I = gauss_filter(I, filter_size, 1.76);
+I = f_gauss_filter(I, filter_size, 1.76);
 display_result(I, 'Gaussian Filter', 1, 1);
 
 
