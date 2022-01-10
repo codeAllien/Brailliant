@@ -43,9 +43,8 @@ display_result(I, 'Fixed Corners', show_steps, keep_steps);
 
 % % Gaussian Filter
 filter_size = 5;
-I = imgaussfilt(I,filter_size);
-display_result(I, 'Gaussian Filter', show_steps, keep_steps);
-
+I = gauss_filter(I, filter_size, 1.76);
+display_result(I, 'Gaussian Filter', 1, 1);
 
 
 % % Binarise Image
